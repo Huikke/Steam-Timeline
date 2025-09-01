@@ -37,11 +37,10 @@ def database_update():
         last_time_played = game["rtime_last_played"]
 
         # Add to local dict
-        game_list[str(appid)] = [playtime, last_time_played]
+        game_list[str(appid)] = {"playtime": playtime, "last_time_played": last_time_played}
 
     # Upload to MongoDB
-    user_info = {"_id": user_id, "games": game_list}
-    db_users.insert_one(user_info)
+    db_users.update_one({"_id": user_id}, {"$set": {"games": game_list}}, upsert=True)
 
 
 
