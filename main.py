@@ -18,7 +18,6 @@ def database_update():
     client = MongoClient(mongo_uri)
     db = client["SteamAPI"]
     db_users = db["users"]
-    db_games = db["games"]
     db_activity = db["activity"]
 
     # Get owned games data from Steam API
@@ -44,8 +43,9 @@ def database_update():
     # If user does not exist, create it
     if db_users.find_one(user_id) == None:
         print("user not found, adding")
-        db_users.insert_one({"_id": user_id}, {"$set": {"games": game_list}})
-
+        db_users.insert_one({"_id": user_id, "games": game_list})
+        # For previous played time keeping purposes
+        db["users_legacy"].insert_one({"_id": user_id}, {"$set": {"games": game_list}})
 
     # Get the user's game list from database
     fetched_game_list = db_users.find_one(user_id)["games"]
@@ -76,10 +76,6 @@ def database_update():
                 print(game,"changed")
         # Update user's game list in database
         db_users.update_one({"_id": user_id}, {"$set": {"games": game_list}})
-
-
-    # WIP: Game collection
-    # db_games.insert_many([{"_id": game} for game in game_list]) # game
 
 
 
