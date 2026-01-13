@@ -4,6 +4,11 @@ from datetime import datetime
 from dotenv import load_dotenv
 load_dotenv()
 from pymongo import MongoClient
+import dns.resolver
+
+# Code from internet to solve pymongo dns problems
+dns.resolver.default_resolver=dns.resolver.Resolver(configure=False)
+dns.resolver.default_resolver.nameservers=['8.8.8.8']
 
 # Fetches from Steam API, make changes to it, and upload it to MongoDB (WIP)
 def database_update():
