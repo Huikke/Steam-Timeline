@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import requests
 import os
 from datetime import datetime
@@ -7,8 +8,8 @@ from pymongo import MongoClient
 import dns.resolver
 
 # Code from internet to solve pymongo dns problems
-dns.resolver.default_resolver=dns.resolver.Resolver(configure=False)
-dns.resolver.default_resolver.nameservers=['8.8.8.8']
+# dns.resolver.default_resolver=dns.resolver.Resolver(configure=False)
+# dns.resolver.default_resolver.nameservers=['8.8.8.8']
 
 # Fetches from Steam API, make changes to it, and upload it to MongoDB (WIP)
 def database_update():
@@ -72,6 +73,11 @@ def database_update():
                 last_time_played_now = game_list[game]["last_time_played"]
                 # Get current timestamp in ISO format
                 timestamp = datetime.now().astimezone().isoformat(timespec="seconds")
+
+                # Don't update activity, if the playtimes are the same
+                if playtime_fetched == playtime_now:
+                    print(game, "has the same playtime as database (meaning still in-game), skipping")
+                    continue
 
                 # Create activity record with changes
                 activity = { "timestamp": timestamp, "user": user_id, "game": game,
