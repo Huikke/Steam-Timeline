@@ -19,10 +19,15 @@ def activity_fetcher():
 
     # Fetcher itself
     activities = db_activity.find()
+    fetched_list = []
     for activity in activities:
-        print(activity["timestamp"], ",", activity["game"], ",", activity["prev_playtime"], ",", activity["current_playtime"], ",", datetime.fromtimestamp(activity["last_played"]))
+        timestamp = activity["timestamp"].replace("T", " ").split("+")[0]
+        last_played = datetime.fromtimestamp(activity["last_played"])
+        fetched_list.append((timestamp, activity["game"], activity["prev_playtime"], activity["current_playtime"], last_played))
 
+    return fetched_list
 
 
 if __name__ == "__main__":
-    activity_fetcher()
+    fetched = activity_fetcher()
+    print(fetched)
